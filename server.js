@@ -538,7 +538,7 @@ app.post("/logs/:id/delete", async (req, res) => {
 
 app.get("/reports", async (req, res) => {
     try {
-        const [modes, statuses, critical, lowBattery] = await Promise.all([
+        const [modes, statuses, critical, lowBattery, joinedMissions] = await Promise.all([
             query(`
                 SELECT communication_mode,
                        COUNT(*)::int AS records,
@@ -563,6 +563,17 @@ app.get("/reports", async (req, res) => {
                 SELECT satellite_name, battery_percent, link_quality
                 FROM satellites
                 WHERE battery_percent < 30 OR link_quality < 30
+            `),
+            query(`
+                SELECT
+                    s.satellite_name,
+                    m.data_type,
+                    m.communication_mode,
+                    m.status
+                FROM mission_logs m
+                JOIN satellites s
+                    ON m.satellite_id = s.satellite_id
+                ORDER BY m.log_id DESC
             `)
         ]);
 
