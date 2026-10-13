@@ -628,6 +628,36 @@ app.get("/reports", async (req, res) => {
             ${missionTable(critical)}
         </section>
 
+        
+        <section class="panel">
+            <div class="paneltitle">
+                <h3>Satellite–Mission JOIN Results</h3>
+                <span class="count">${joinedMissions.length} Records</span>
+            </div>
+            <div class="tablewrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Satellite Name</th>
+                            <th>Data Type</th>
+                            <th>Communication Mode</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${joinedMissions.map(row => `
+                            <tr>
+                                <td>${escapeHTML(row.satellite_name)}</td>
+                                <td>${escapeHTML(row.data_type)}</td>
+                                <td>${escapeHTML(row.communication_mode)}</td>
+                                <td>${escapeHTML(row.status)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="panel">
             <div class="paneltitle">
                 <h3>Low Battery or Weak Link</h3>
@@ -639,6 +669,7 @@ app.get("/reports", async (req, res) => {
                 </div>
             `).join("") : "<p>No satellites below the threshold.</p>"}
         </section>`;
+
 
         res.send(page("Reports", content));
     } catch (error) {
